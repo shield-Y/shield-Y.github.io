@@ -4,15 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Data Science Portfolio | Survival Analysis</title>
+    
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
     <style>
-        /* CSS Variables for Towards Data Science Style */
         :root {
             --bg-color: #ffffff;
             --text-main: #292929;
             --text-muted: #757575;
-            --primary-color: #1a8917; /* Medium Green */
+            --primary-color: #1a8917; 
             --code-bg: #f5f5f5;
-            --code-text: #24292e;
             --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             --font-serif: "Medium Content Serif", "Georgia", Cambria, "Times New Roman", Times, serif;
         }
@@ -27,107 +29,30 @@
             font-size: 20px;
         }
 
-        /* Typography */
-        h1, h2, h3, h4 {
-            font-family: var(--font-sans);
-            font-weight: 700;
-            color: #000;
-        }
-
+        h1, h2, h3, h4 { font-family: var(--font-sans); font-weight: 700; color: #000; }
         h1 { font-size: 2.8rem; margin-bottom: 0.5rem; line-height: 1.2; }
         h2 { font-size: 2rem; margin-top: 3rem; border-bottom: 1px solid #eaeaea; padding-bottom: 0.5rem; }
         h3 { font-size: 1.5rem; margin-top: 2rem; }
-        
         p { margin-bottom: 1.5rem; }
 
-        /* Layout */
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 40px 20px;
-        }
+        .container { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
+        header { margin-bottom: 4rem; text-align: left; }
+        .subtitle { font-family: var(--font-sans); color: var(--text-muted); font-size: 1.2rem; margin-top: 0; }
 
-        header {
-            margin-bottom: 4rem;
-            text-align: left;
-        }
+        figure { margin: 2rem 0; text-align: center; }
+        figure img { max-width: 100%; height: auto; border-radius: 4px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        figcaption { font-family: var(--font-sans); color: var(--text-muted); font-size: 0.9rem; margin-top: 0.8rem; }
 
-        .subtitle {
-            font-family: var(--font-sans);
-            color: var(--text-muted);
-            font-size: 1.2rem;
-            margin-top: 0;
-        }
+        .image-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin: 2rem 0; }
+        .image-grid figure { margin: 0; }
+        
+        .gallery-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 2rem 0; }
+        .gallery-grid figure { margin: 0; }
+        .gallery-grid img { box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
 
-        /* Images and Figures */
-        figure {
-            margin: 2rem 0;
-            text-align: center;
-        }
-
-        figure img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 4px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-
-        figcaption {
-            font-family: var(--font-sans);
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            margin-top: 0.8rem;
-        }
-
-        /* Side-by-side Image Grid */
-        .image-grid {
-            display: flex;
-            gap: 20px;
-            margin: 2rem 0;
-        }
-
-        .image-grid figure {
-            margin: 0;
-            flex: 1;
-        }
-
-        /* Code Blocks */
-        pre {
-            background-color: var(--code-bg);
-            color: var(--code-text);
-            padding: 1.5rem;
-            border-radius: 5px;
-            overflow-x: auto;
-            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
-            font-size: 0.9rem;
-            border: 1px solid #eaeaea;
-        }
-
-        code {
-            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
-            background-color: var(--code-bg);
-            padding: 2px 4px;
-            border-radius: 3px;
-            font-size: 0.9em;
-        }
-
-        pre code {
-            padding: 0;
-            background-color: transparent;
-        }
-
-        /* Lists */
-        ul, ol {
-            margin-bottom: 1.5rem;
-            padding-left: 2rem;
-        }
-
-        li { margin-bottom: 0.5rem; }
-
-        /* Responsive */
         @media (max-width: 768px) {
             h1 { font-size: 2.2rem; }
-            .image-grid { flex-direction: column; }
+            .gallery-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -145,12 +70,6 @@
                 <p>Retaining telecommunications customers is critical. It is widely accepted that the cost of retention is significantly lower than the cost of acquisition. In this project, I utilized the IBM Telco Customer Churn dataset and transitioned traditional Pandas-based survival models into a scalable PySpark architecture to predict at what point in time specific customers are at risk of cancellation, ultimately projecting their Customer Lifetime Value (CLV).</p>
             </section>
 
-            <section id="data-preparation">
-                <h2>01. Data Preparation and Cohort Selection</h2>
-                <p>To prevent data type inference errors, a strict <code>StructType</code> schema was explicitly defined before loading the raw dataset into the Bronze layer. Key continuous variables (e.g., <code>tenure</code>, <code>MonthlyCharges</code>) were specifically cast as <code>DoubleType</code>.</p>
-                <p>To focus the analysis on the most volatile customer segment, the analytical Silver layer was curated using two strict transformations: numerically mapping the target <code>Churn</code> status, and explicitly narrowing the dataset to customers on a <strong>'Month-to-month'</strong> contract who subscribe to <strong>Internet Services</strong>. This precise curation reduced the analytical sample from 7,043 raw records down to 3,344 active records.</p>
-            </section>
-
             <section id="kaplan-meier">
                 <h2>02. Non-parametric Analysis: Kaplan-Meier Estimator</h2>
                 <p>To account for right-censored data (active subscribers who have not yet churned), the <code>KaplanMeierFitter</code> was applied. Based on the model fitting, the <strong>Median Survival Time</strong> for this cohort is exactly <strong>34.0 months</strong>, indicating that 50% of the month-to-month internet subscribers are expected to churn within this timeframe.</p>
@@ -160,72 +79,90 @@
                     <figcaption>Figure 1: Population-level Kaplan-Meier Survival Curve.</figcaption>
                 </figure>
 
-                <p>Pairwise Log-Rank tests were executed to evaluate the null hypothesis across subgroups. Variables such as <code>gender</code> ($p \approx 0.204$) failed to reject the null hypothesis, possessing no statistically significant predictive power. Conversely, factors like <code>OnlineBackup</code> ($p \approx 2.62 \times 10^{-67}$) demonstrated extreme statistical significance, confirming strong divergence in retention rates.</p>
+                <h3>Covariate-Level Analysis</h3>
+                <p>Pairwise Log-Rank tests were executed to evaluate the null hypothesis across subgroups. Variables such as <code>gender</code> (\(p \approx 0.204\)) failed to reject the null hypothesis. Conversely, factors like <code>OnlineBackup</code> (\(p \approx 2.62 \times 10^{-67}\)) demonstrated extreme statistical significance.</p>
+                
+                <div class="gallery-grid">
+                    <figure>
+                        <img src="assets/img/km_gender.png" alt="Log-rank Gender">
+                        <figcaption>Gender (Not Significant)</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="assets/img/km_onlinebackup.png" alt="Log-rank Online Backup">
+                        <figcaption>Online Backup (Significant)</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="assets/img/km_internetservice.png" alt="Log-rank Internet Service">
+                        <figcaption>Internet Service</figcaption>
+                    </figure>
+                </div>
             </section>
 
             <section id="cox-ph">
                 <h2>03. Semi-parametric Analysis: Cox Proportional Hazards</h2>
-                <p>In contrast to the univariate Kaplan-Meier estimator, the Cox Proportional Hazards (CPH) model enables multi-variate analysis to evaluate the simultaneous impact of multiple covariates. The CPH model estimates the hazard ratio (HR), representing the difference in failure probability between groups.</p>
-                
-                <p>The model achieved a <strong>Concordance index of 0.64</strong>. Notably, <code>OnlineBackup_Yes</code> exhibits a strong protective effect with an exp(coef) of 0.46, representing a <strong>54% reduction</strong> in churn risk compared to the baseline.</p>
+                <p>The CPH model estimates the hazard ratio (HR), representing the difference in failure probability between groups. The model achieved a <strong>Concordance index of 0.64</strong>. Notably, <code>OnlineBackup_Yes</code> exhibits a strong protective effect, representing a <strong>54% reduction</strong> in churn risk compared to the baseline.</p>
+
+                <figure>
+                    <img src="assets/img/cox_forest.png" alt="Cox PH Forest Plot">
+                    <figcaption>Figure 2: Hazard Ratios (Forest Plot).</figcaption>
+                </figure>
+
+                <h3>Assumption Verification (Schoenfeld Residuals & Log-log Plots)</h3>
+                <p>A fundamental requirement for CPH is the proportionality of hazards over time. As shown below, the crossing lines in the Log-log plots and trends in residuals indicate time-dependent hazards for certain services, requiring careful model interpretation.</p>
 
                 <div class="image-grid">
                     <figure>
-                        <img src="assets/img/cox_forest.png" alt="Cox PH Forest Plot">
-                        <figcaption>Figure 2a: Hazard Ratios (Forest Plot).</figcaption>
+                        <img src="assets/img/cox_loglog_internetservice.png" alt="Log-log Diagnostics">
+                        <figcaption>Log-log Curve (Internet Service)</figcaption>
                     </figure>
                     <figure>
-                        <img src="assets/img/cox_loglog_internetservice.png" alt="Log-log KM Curve">
-                        <figcaption>Figure 2b: Assumption check - crossing lines indicate time-dependent hazards.</figcaption>
+                        <img src="assets/img/cox_res_internetservice_dsl.png" alt="Residuals">
+                        <figcaption>Schoenfeld Residuals (DSL)</figcaption>
                     </figure>
                 </div>
             </section>
 
             <section id="aft">
                 <h2>04. Parametric Analysis: Accelerated Failure Time (AFT)</h2>
-                <p>The Accelerated Failure Time (AFT) model is fully parametric, assuming that the outcome variable follows a specific probability distribution. We implemented the <code>LogLogisticAFTFitter</code>. Unlike hazard ratios, AFT models quantify the effect of covariates as "acceleration factors," which speed up or slow down the time until the churn event occurs.</p>
+                <p>The Accelerated Failure Time (AFT) model is fully parametric. We implemented the <code>LogLogisticAFTFitter</code>. Unlike hazard ratios, AFT models quantify the effect of covariates as "acceleration factors," which speed up or slow down the time until the churn event occurs.</p>
 
                 <figure>
                     <img src="assets/img/aft_log.png" alt="AFT Model Coefficients">
                     <figcaption>Figure 3: Log-Logistic AFT Model Distribution of Coefficients.</figcaption>
                 </figure>
-                
-                <p>Based on the Log-Logistic distribution, the Median Survival Time was calculated to be <strong>135.51 months</strong>. For instance, <code>InternetService_DSL</code> has an exp(coef) of 1.47, indicating that for this cohort, the time-until-churn is accelerated by a factor of 1.47 compared to the baseline Fiber Optic group.</p>
             </section>
 
             <section id="clv">
-                <h2>05. Business Application: Interactive CLV Dashboard</h2>
+                <h2>05. Business Application: Customer Lifetime Value (CLV)</h2>
                 <p>The ultimate value of survival analysis lies in translating predictive statistics into financial decision-making tools. By leveraging the survival probabilities generated by the final Cox Proportional Hazards model, we projected a customer's monetary contribution over time.</p>
                 
-                <ul>
-                    <li><strong>Expected Monthly Profit:</strong> Survival probability multiplied by the base monthly profit margin.</li>
-                    <li><strong>NPV Discounting:</strong> Future profits adjusted to present-day value using a 10% Internal Rate of Return (IRR).</li>
-                    <li><strong>Cumulative NPV (LTV):</strong> Discounted profits summed across the customer lifecycle.</li>
-                </ul>
-
-                <figure>
-                    <img src="assets/img/image_405d8a.png" alt="Interactive Dashboard UI">
-                    <figcaption>Figure 4: ipywidgets Interactive UI for Persona Simulation.</figcaption>
-                </figure>
-
-                <p>A baseline simulation was conducted using a default customer profile. The bar chart below identifies critical milestones for customer acquisition. These figures establish a data-driven "ceiling" for <strong>Customer Acquisition Costs (CAC)</strong>. Knowing that a baseline customer generates approximately $508 over 36 months enables marketing teams to optimize their acquisition budget effectively.</p>
+                <p>Below is an example projection for a baseline customer profile (computed with a 10% Internal Rate of Return). The interface parameters and the resulting dynamic projection table illustrate how predictive outputs map to Expected Monthly Profits and Net Present Value (NPV).</p>
 
                 <div class="image-grid">
                     <figure>
-                        <img src="assets/img/image_405cce.png" alt="Cumulative NPV Milestones">
-                        <figcaption>Figure 5a: Cumulative NPV ($251 at 12mo, $508 at 36mo).</figcaption>
+                        <img src="assets/img/CNPV_list.png" alt="Dashboard UI Parameters">
+                        <figcaption>Figure 4a: Example Persona Input Parameters.</figcaption>
                     </figure>
                     <figure>
-                        <img src="assets/img/image_405cb3.png" alt="Profile Survival Curve">
-                        <figcaption>Figure 5b: Retention curve for the selected financial profile.</figcaption>
+                        <img src="assets/img/CNPV_result.png" alt="NPV Table">
+                        <figcaption>Figure 4b: Financial Projection Output Table.</figcaption>
+                    </figure>
+                </div>
+
+                <p>A baseline simulation reveals that a customer generates approximately $508 over 36 months. This establishes a data-driven "ceiling" for <strong>Customer Acquisition Costs (CAC)</strong>.</p>
+
+                <div class="image-grid">
+                    <figure>
+                        <img src="assets/img/CNPV_LTV.png" alt="Cumulative NPV Milestones">
+                        <figcaption>Figure 5a: Cumulative NPV Milestones ($251 at 12mo, $508 at 36mo).</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="assets/img/CNPV_curve.png" alt="Profile Survival Curve">
+                        <figcaption>Figure 5b: Retention curve for the selected profile.</figcaption>
                     </figure>
                 </div>
             </section>
         </main>
-        
-        <footer style="margin-top: 5rem; border-top: 1px solid #eaeaea; padding-top: 2rem; text-align: center; color: var(--text-muted); font-family: var(--font-sans); font-size: 0.9rem;">
-            <p>&copy; 2026 [Your Name]. Built with PySpark & Databricks.</p>
-        </footer>
     </div>
 
 </body>
